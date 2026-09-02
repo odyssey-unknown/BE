@@ -1,0 +1,6 @@
+# 테스트용. DB 는 TestcontainersConfiguration 이 띄운 postgres 를 사용하므로
+# 접속 정보를 적지 않는다. 나머지는 application.yaml 을 그대로 물려받는다.
+spring:
+  jpa:
+    # 실행되는 SQL 은 출력하지 않는다 (CI 로그가 길어지는 것을 막음)
+    show-sql: false
