@@ -1,0 +1,73 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.1.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.odyssey'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// 웹 계층 - REST 컨트롤러, 내장 Tomcat
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	// 요청 DTO 검증 - @Valid, @NotNull 등
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// API 문서 자동 생성 - Swagger UI (/swagger-ui.html)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0'
+
+	// JPA + Hibernate - 엔티티 매핑, 리포지토리
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// PostgreSQL JDBC 드라이버 - 실행 시점에만 필요
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// DB 스키마 버전 관리 - 기동 시 migration SQL 자동 실행
+	implementation 'org.springframework.boot:spring-boot-starter-flyway'
+	// Flyway의 PostgreSQL 전용 지원 모듈
+	implementation 'org.flywaydb:flyway-database-postgresql'
+
+	// 헬스체크 / 메트릭 엔드포인트 - /actuator/**
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// 보일러플레이트 제거 - @Getter, @Builder 등 (컴파일 시점에만 사용)
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// 코드 변경 시 자동 재시작 - 개발 전용, 배포 jar에서는 제외됨
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	// bootRun 실행 시 compose.yaml의 컨테이너 자동 기동
+	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+
+	// 각 스타터의 테스트 지원 - JUnit 5, MockMvc, @DataJpaTest 등
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+	// 테스트용 postgres 컨테이너를 테스트가 직접 띄운다 (CI 포함)
+	// Spring Boot 4 의 BOM 은 testcontainers 버전을 관리하지 않아 직접 지정한다
+	testImplementation platform('org.testcontainers:testcontainers-bom:1.21.4')
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:postgresql'
+
+	// JUnit 플랫폼 실행기 - 테스트 러너 구동용
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// 테스트 코드에서도 Lombok 사용
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
