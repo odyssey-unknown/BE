@@ -1,0 +1,32 @@
+# 로컬 개발용. compose.yaml 의 postgres 를 spring-boot-docker-compose 가
+# 자동 기동하고 datasource 까지 주입하므로 DB 설정을 따로 두지 않는다.
+spring:
+  jpa:
+    hibernate:
+      # create drop-create update validate none
+      ddl-auto: create # drop-create 멱등
+
+    show-sql: true # sql을 console에 출력
+
+    # 출력되는 SQL 보기 좋게 줄바꿈
+    properties:
+      hibernate:
+        format_sql: true
+
+# SQL 의 ? 자리에 바인딩된 실제 값까지 출력
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace
+
+
+management:
+  # 로컬에서는 모든 actuator 엔드포인트 개방
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+  # 헬스체크 상세(DB 연결 상태 등) 항상 표시
+  endpoint:
+    health:
+      show-details: always

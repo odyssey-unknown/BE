@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: odyssey
+
+    # 프로파일 미지정으로 실행하면 local 로 동작
+  profiles:
+    default: local
+
+  jpa:
+    hibernate:
+      # 스키마는 Flyway 관리, Hibernate 엔티티-테이블 일치 검증
+      ddl-auto: validate
+    # 뷰 렌더링까지 영속성 컨텍스트를 열어두지 않는다 (커넥션 점유 방지)
+    open-in-view: false
+
+  # db migration
+  flyway:
+    enabled: true
+    # 마이그레이션 SQL 위치 (V1__init.sql ...)
+    locations: classpath:db/migration
+
+management:
+  # 외부로 노출할 actuator 엔드포인트
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+  # /actuator/info 에 환경 정보 포함
+  info:
+    env:
+      enabled: true
+
+# CORS - 이 주소의 프론트엔드에서 오는 요청을 허용한다
+cors:
+  allowed-origins: http://localhost:3000
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs # OpenAPI 문서(JSON) 경로
+  swagger-ui:
+
+    path: /swagger-ui.html # Swagger UI 진입 경로
+    operations-sorter: method # 엔드포인트를 HTTP 메서드 순으로 정렬
+    tags-sorter: alpha # 태그를 알파벳 순으로 정렬
+    display-request-duration: true # 각 요청의 소요 시간 표시
+
+  # 응답 미디어 타입 기본값
+  default-produces-media-type: application/json
