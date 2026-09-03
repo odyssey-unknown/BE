@@ -1,5 +1,6 @@
 package com.odyssey.health;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +30,9 @@ class HealthControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.success").value(true))
 				.andExpect(jsonPath("$.data.Status").value("Ok"))
-				.andExpect(jsonPath("$.error").doesNotExist());
+				// doesNotExist() 는 non-null 값이 없는지만 본다. error 키가 통째로 빠져도
+				// 통과하므로, 키가 있는지와 값이 null 인지를 나눠서 검증한다.
+				.andExpect(jsonPath("$.error").hasJsonPath())
+				.andExpect(jsonPath("$.error").value(nullValue()));
 	}
 }
