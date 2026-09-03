@@ -1,0 +1,34 @@
+package com.odyssey.health;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.web.servlet.MockMvc;
+
+/**
+ * {@link HealthController} 의 웹 계층 테스트.
+ *
+ * <p>{@link WebMvcTest} 는 컨트롤러와 그 주변(MessageConverter, ControllerAdvice)만 띄운다.
+ * DataSource / JPA / Flyway 는 올라오지 않으므로 postgres 컨테이너가 필요 없다.
+ */
+@WebMvcTest(HealthController.class)
+class HealthControllerTest {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	@DisplayName("GET /health 는 ApiResult 형식으로 Status Ok 를 응답한다")
+	void health() throws Exception {
+		mockMvc.perform(get("/health"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.success").value(true))
+				.andExpect(jsonPath("$.data.Status").value("Ok"))
+				.andExpect(jsonPath("$.error").doesNotExist());
+	}
+}
